@@ -16,4 +16,4 @@ source /scratch/rp06/sl5952/PaCo-2/.venv/bin/activate
 
 cd ..
 # Run training
-python train.py --config configs/cotton_r50_224.yaml
+python train.py --config configs/cotton_r18_224.yaml
