@@ -13,8 +13,8 @@ module load cuda/12.6.2
 
 nvidia-smi >> gpu-info.txt
 
-cd ..
+cd $PBS_O_WORKDIR
 
-source /scratch/rp06/sl5952/PaCo-2/.venv/bin/activate
-python3 train_clean.py --config configs/ufg_base.yaml >> out_train_a100.txt
+# Run training
+python train_fixed.py --config configs/ufg_base.yaml
 

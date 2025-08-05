@@ -172,6 +172,17 @@ def train_epoch(model: nn.Module,
         if isinstance(batch_data[0], tuple):
             # Two-view format: ((view1, view2), targets)
             (x1, x2), targets = batch_data
+        elif isinstance(batch_data[0], list):
+            # Handle list format from DataLoader
+            if len(batch_data[0]) == 2 and hasattr(batch_data[0][0], 'shape'):
+                # Two views in list format
+                x1, x2 = batch_data[0]
+                targets = batch_data[1]
+            else:
+                # Single view in list format
+                images = batch_data[0]
+                targets = batch_data[1]
+                x1 = x2 = images
         else:
             # Single view format: (images, targets) - create duplicate for testing
             images, targets = batch_data

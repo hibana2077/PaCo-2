@@ -212,95 +212,10 @@ def main():
         print(f"\nEpoch {epoch}/{num_epochs-1}")
         print("-" * 50)
         
-def train_epoch(model: nn.Module, 
-                train_loader: DataLoader,
-                optimizer,
-                device: torch.device,
-                epoch: int,
-                print_freq: int = 100) -> dict:
-    """Train for one epoch - modified for two-view data"""
-    
-    model.train()
-    model.set_epoch(epoch)
-    
-    # Initialize meters
-    meters = {
-        'loss': AverageMeter(),
-        'ce_loss': AverageMeter(),
-        'pac_loss': AverageMeter(),
-        'soc_loss': AverageMeter(),
-        'acc': AverageMeter(),
-        'balanced_acc': AverageMeter()
-    }
-    
-    start_time = time.time()
-    
-    for batch_idx, batch_data in enumerate(train_loader):
-        # Handle two-view data format
-        if isinstance(batch_data[0], tuple):
-            # Two-view format: ((view1, view2), targets)
-            (x1, x2), targets = batch_data
-        else:
-            # Single view format: (images, targets) - create duplicate
-            images, targets = batch_data
-            x1 = x2 = images
-        
-        # Move to device
-        x1 = x1.to(device, non_blocking=True)
-        x2 = x2.to(device, non_blocking=True)
-        targets = targets.to(device, non_blocking=True)
-        
-        batch_size = x1.size(0)
-        
-        optimizer.zero_grad()
-        
-        # Forward pass with two views
-        outputs = model(x1, x2, targets)
-        
-        # Extract losses
-        total_loss = outputs['total']
-        ce_loss = outputs.get('ce', torch.tensor(0.0))
-        pac_loss = outputs.get('pac', torch.tensor(0.0))
-        soc_loss = outputs.get('soc', torch.tensor(0.0))
-        
-        # Backward pass
-        total_loss.backward()
-        optimizer.step()
-        
-        # Compute metrics
-        with torch.no_grad():
-            from src.train_utils import compute_metrics
-            metrics = compute_metrics(outputs['logits'], targets, 
-                                    model.classifier.out_features)
-        
-        # Update meters
-        meters['loss'].update(total_loss.item(), batch_size)
-        meters['ce_loss'].update(ce_loss.item(), batch_size)
-        meters['pac_loss'].update(pac_loss.item(), batch_size)
-        meters['soc_loss'].update(soc_loss.item(), batch_size)
-        meters['acc'].update(metrics['acc'], batch_size)
-        meters['balanced_acc'].update(metrics['balanced_acc'], batch_size)
-        
-        # Print progress
-        if batch_idx % print_freq == 0:
-            elapsed = time.time() - start_time
-            print(f'Epoch: [{epoch}][{batch_idx}/{len(train_loader)}] '
-                  f'Time: {elapsed:.1f}s '
-                  f'Loss: {meters["loss"].avg:.4f} '
-                  f'CE: {meters["ce_loss"].avg:.4f} '
-                  f'PaC: {meters["pac_loss"].avg:.4f} '
-                  f'SoC: {meters["soc_loss"].avg:.4f} '
-                  f'Acc: {meters["acc"].avg:.3f} '
-                  f'Bal-Acc: {meters["balanced_acc"].avg:.3f}')
-    
-    return {
-        'loss': meters['loss'].avg,
-        'ce': meters['ce_loss'].avg,
-        'pac': meters['pac_loss'].avg,
-        'soc': meters['soc_loss'].avg,
-        'acc': meters['acc'].avg,
-        'balanced_acc': meters['balanced_acc'].avg
-    }
+        # Training phase
+        train_metrics = train_epoch(
+            model, train_loader, optimizer, device, epoch, print_freq
+        )
         
         # Validation phase
         val_metrics = validate_epoch(model, val_loader, device, epoch)

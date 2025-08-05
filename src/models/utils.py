@@ -26,38 +26,38 @@ class PartSampler(nn.Module):
         self.spatial_conv = nn.Conv2d(1, 1, 1, bias=False)
         nn.init.ones_(self.spatial_conv.weight)
         
-    def forward(self, F: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, feat: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Extract parts from feature map F
         
         Args:
-            F: Feature map of shape (B, C, H, W)
+            feat: Feature map of shape (B, C, H, W)
             
         Returns:
             Z: Part features (B, K, C)
             peaks: Peak locations (B, K, 2) - (h, w) coordinates
         """
-        B, C, H, W = F.shape
+        B, C, H, W = feat.shape
         
         # Channel attention: Global Average Pooling + softmax
-        a = F.mean(dim=[2, 3])  # (B, C)
+        a = feat.mean(dim=[2, 3])  # (B, C)
         a = F.softmax(a, dim=1)  # (B, C)
         
         # Spatial attention: mean over channels + 1x1 conv + softmax
-        S = F.mean(dim=1, keepdim=True)  # (B, 1, H, W)
+        S = feat.mean(dim=1, keepdim=True)  # (B, 1, H, W)
         S = self.spatial_conv(S)  # (B, 1, H, W)
         S = F.softmax(S.view(B, -1), dim=1).view(B, 1, H, W)
         
         # Combine for saliency map M
         a_expanded = a.unsqueeze(-1).unsqueeze(-1)  # (B, C, 1, 1)
-        weighted_F = F * a_expanded  # (B, C, H, W)
+        weighted_F = feat * a_expanded  # (B, C, H, W)
         M = (weighted_F.sum(dim=1, keepdim=True) * S).squeeze(1)  # (B, H, W)
         
         # Extract K peaks with NMS
         peaks = self._extract_peaks_with_nms(M)  # (B, K, 2)
         
         # Extract part features using r×r windows
-        Z = self._extract_part_features(F, peaks)  # (B, K, C)
+        Z = self._extract_part_features(feat, peaks)  # (B, K, C)
         
         return Z, peaks
     
@@ -75,7 +75,7 @@ class PartSampler(nn.Module):
         peaks = torch.zeros(B, self.K, 2, device=M.device, dtype=torch.long)
         
         for b in range(B):
-            saliency = M[b].cpu().numpy()
+            saliency = M[b].detach().cpu().numpy()
             peak_coords = []
             
             # Simple peak detection with NMS
@@ -132,11 +132,10 @@ class HungarianMatcher(nn.Module):
     """
     Hungarian matching for part correspondence between two views
     """
-    
     def __init__(self, use_cosine: bool = True):
         super().__init__()
         self.use_cosine = use_cosine
-    
+
     def forward(self, Z1: torch.Tensor, Z2: torch.Tensor, 
                 Sigma_plus: Optional[torch.Tensor] = None) -> torch.Tensor:
         """
@@ -166,11 +165,11 @@ class HungarianMatcher(nn.Module):
                         diff = Z1[b, i] - Z2[b, j]
                         # Use Cholesky for numerical stability
                         L = torch.linalg.cholesky(Sigma_plus[b])
-                        y = torch.linalg.solve_triangular(L, diff, upper=False)
+                        y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
                         cost[i, j] = torch.norm(y, p=2)
             
             # Solve assignment problem
-            cost_np = cost.cpu().numpy()
+            cost_np = cost.detach().cpu().numpy()
             row_ind, col_ind = linear_sum_assignment(cost_np)
             matching[b] = torch.tensor(col_ind, device=Z1.device)
         
@@ -295,11 +294,11 @@ class CovarUtils:
         else:  # Single matrix
             try:
                 L = torch.linalg.cholesky(Sigma)
-                y = torch.linalg.solve_triangular(L, diff, upper=False)
+                y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
                 return torch.norm(y, p=2)
             except:
                 # Fallback to regularized version
                 reg_Sigma = Sigma + 1e-6 * torch.eye(Sigma.shape[-1], device=Sigma.device)
                 L = torch.linalg.cholesky(reg_Sigma)
-                y = torch.linalg.solve_triangular(L, diff, upper=False)
+                y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
                 return torch.norm(y, p=2)

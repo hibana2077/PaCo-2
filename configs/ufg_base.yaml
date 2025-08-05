@@ -11,7 +11,7 @@ dataset:
 data:
   image_size: 224
   batch_size: 32
-  num_workers: 4
+  num_workers: 4  # Use multiple workers for faster data loading
 
 # Model configuration
 model:
@@ -68,7 +68,7 @@ training:
   epochs: 100
   seed: 3407        # Fixed seed for reproducibility
   save_dir: "./runs"
-  print_freq: 100   # Print frequency
+  print_freq: 50   # Print every 50 batches instead of every batch
   
 # Evaluation settings
 evaluation:

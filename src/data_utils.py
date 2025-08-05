@@ -143,13 +143,31 @@ class RandAugmentLight:
         
         # Define operations with controlled magnitude for fine-grained tasks
         self.ops = [
-            ('rotate', lambda img, mag: TF.rotate(img, random.uniform(-mag*3, mag*3))),
-            ('brightness', lambda img, mag: TF.adjust_brightness(img, 1 + random.uniform(-mag*0.05, mag*0.05))),
-            ('contrast', lambda img, mag: TF.adjust_contrast(img, 1 + random.uniform(-mag*0.05, mag*0.05))),
-            ('saturation', lambda img, mag: TF.adjust_saturation(img, 1 + random.uniform(-mag*0.05, mag*0.05))),
-            ('hue', lambda img, mag: TF.adjust_hue(img, random.uniform(-mag*0.02, mag*0.02))),
-            ('sharpness', lambda img, mag: TF.adjust_sharpness(img, 1 + random.uniform(-mag*0.1, mag*0.1))),
+            ('rotate', self._rotate),
+            ('brightness', self._brightness),
+            ('contrast', self._contrast),
+            ('saturation', self._saturation),
+            ('hue', self._hue),
+            ('sharpness', self._sharpness),
         ]
+    
+    def _rotate(self, img, mag):
+        return TF.rotate(img, random.uniform(-mag*3, mag*3))
+    
+    def _brightness(self, img, mag):
+        return TF.adjust_brightness(img, 1 + random.uniform(-mag*0.05, mag*0.05))
+    
+    def _contrast(self, img, mag):
+        return TF.adjust_contrast(img, 1 + random.uniform(-mag*0.05, mag*0.05))
+    
+    def _saturation(self, img, mag):
+        return TF.adjust_saturation(img, 1 + random.uniform(-mag*0.05, mag*0.05))
+    
+    def _hue(self, img, mag):
+        return TF.adjust_hue(img, random.uniform(-mag*0.02, mag*0.02))
+    
+    def _sharpness(self, img, mag):
+        return TF.adjust_sharpness(img, 1 + random.uniform(-mag*0.1, mag*0.1))
     
     def __call__(self, img):
         """Apply random augmentations"""
