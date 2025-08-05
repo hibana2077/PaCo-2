@@ -11,7 +11,7 @@ model:
   alpha: 0.2
   beta: 0.05
   gamma: 0.1
-  top_m_candidates: 32
+  top_m_candidates: 64
   epsilon: 1.0e-3  # Increased for numerical stability
   tau: 1.0e-3      # Increased for numerical stability
   use_mahalanobis_warmup: true
