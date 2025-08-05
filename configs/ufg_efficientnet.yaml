@@ -5,11 +5,11 @@ _base_: "ufg_base.yaml"
 
 # Override model settings  
 model:
-  backbone: "efficientnet_b3"
+  backbone: "efficientnet_b0"
 
 # Adjust for different input size
 data:
-  image_size: 300   # EfficientNet-B3 native size
+  image_size: 300   # EfficientNet-B0 native size
   batch_size: 24    # Smaller batch for larger images
 
 optimizer:

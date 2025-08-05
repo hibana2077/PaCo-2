@@ -12,6 +12,7 @@ import numpy as np
 import random
 import time
 from datetime import datetime
+from tqdm.auto import tqdm
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent / 'src'))
@@ -25,6 +26,40 @@ from src.train_utils import (
     create_run_directory, AverageMeter, compute_metrics
 )
 from src.data_utils import create_ufgvc_transforms, TwoViewDataset
+
+
+def load_config_with_base(config_path: str) -> dict:
+    """Load configuration file with _base_ inheritance support"""
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+    
+    # Handle _base_ inheritance
+    if '_base_' in config:
+        base_path = config['_base_']
+        # If relative path, make it relative to current config file
+        if not os.path.isabs(base_path):
+            config_dir = os.path.dirname(config_path)
+            base_path = os.path.join(config_dir, base_path)
+        
+        # Load base configuration recursively
+        base_config = load_config_with_base(base_path)
+        
+        # Merge configurations (current config overrides base)
+        def merge_configs(base: dict, override: dict) -> dict:
+            """Recursively merge two configuration dictionaries"""
+            result = base.copy()
+            for key, value in override.items():
+                if key == '_base_':
+                    continue  # Skip _base_ key
+                if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+                    result[key] = merge_configs(result[key], value)
+                else:
+                    result[key] = value
+            return result
+        
+        config = merge_configs(base_config, config)
+    
+    return config
 
 
 def set_seed(seed: int):
@@ -142,9 +177,8 @@ def main():
                        help='Device to use (auto, cpu, cuda:0, etc.)')
     args = parser.parse_args()
     
-    # Load configuration
-    with open(args.config, 'r') as f:
-        config = yaml.safe_load(f)
+    # Load configuration with _base_ inheritance support
+    config = load_config_with_base(args.config)
     
     # Set device
     if args.device == 'auto':
@@ -208,9 +242,11 @@ def main():
     num_epochs = config['training']['epochs']
     print_freq = config['training'].get('print_freq', 100)
     
-    for epoch in range(start_epoch, num_epochs):
-        print(f"\nEpoch {epoch}/{num_epochs-1}")
-        print("-" * 50)
+    # Create progress bar for epochs
+    epoch_pbar = tqdm(range(start_epoch, num_epochs), desc="Training Progress", unit="epoch")
+    
+    for epoch in epoch_pbar:
+        epoch_pbar.set_description(f"Epoch {epoch}/{num_epochs-1}")
         
         # Training phase
         train_metrics = train_epoch(
@@ -232,19 +268,25 @@ def main():
             'balanced_acc': val_metrics['balanced_acc']
         })
         
-        # Print epoch summary
-        print(f"Train - Loss: {train_metrics['loss']:.4f}, "
-              f"Acc: {train_metrics['acc']:.3f}, "
-              f"Bal-Acc: {train_metrics['balanced_acc']:.3f}")
-        print(f"Val   - Loss: {val_metrics['loss']:.4f}, "
-              f"Acc: {val_metrics['acc']:.3f}, "
-              f"Bal-Acc: {val_metrics['balanced_acc']:.3f}")
+        # Update progress bar with current metrics
+        epoch_pbar.set_postfix({
+            'Train_Loss': f"{train_metrics['loss']:.4f}",
+            'Train_Acc': f"{train_metrics['acc']:.3f}",
+            'Val_Loss': f"{val_metrics['loss']:.4f}",
+            'Val_Acc': f"{val_metrics['acc']:.3f}"
+        })
+        
+        # Print epoch summary (optional, can be disabled if you prefer only progress bar)
+        tqdm.write(f"Epoch {epoch} - Train Loss: {train_metrics['loss']:.4f}, "
+                   f"Train Acc: {train_metrics['acc']:.3f}, "
+                   f"Val Loss: {val_metrics['loss']:.4f}, "
+                   f"Val Acc: {val_metrics['acc']:.3f}")
         
         # Save checkpoint
         is_best = val_metrics['acc'] > best_val_acc
         if is_best:
             best_val_acc = val_metrics['acc']
-            print(f"New best validation accuracy: {best_val_acc:.3f}")
+            tqdm.write(f"New best validation accuracy: {best_val_acc:.3f}")
         
         checkpoint_metrics = {
             'train_acc': train_metrics['acc'],

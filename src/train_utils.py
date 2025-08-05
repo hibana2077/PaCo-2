@@ -8,6 +8,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from typing import Dict, Any, Optional, Tuple
 import numpy as np
+from tqdm.auto import tqdm
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -167,7 +168,11 @@ def train_epoch(model: nn.Module,
     
     start_time = time.time()
     
-    for batch_idx, batch_data in enumerate(train_loader):
+    # Create progress bar for batches
+    train_pbar = tqdm(enumerate(train_loader), total=len(train_loader), 
+                     desc=f"Epoch {epoch}", leave=False, unit="batch")
+    
+    for batch_idx, batch_data in train_pbar:
         # Handle two-view data format
         if isinstance(batch_data[0], tuple):
             # Two-view format: ((view1, view2), targets)
@@ -223,17 +228,26 @@ def train_epoch(model: nn.Module,
         meters['acc'].update(metrics['acc'], batch_size)
         meters['balanced_acc'].update(metrics['balanced_acc'], batch_size)
         
-        # Print progress
+        # Update progress bar with current metrics
+        train_pbar.set_postfix({
+            'Loss': f"{meters['loss'].avg:.4f}",
+            'CE': f"{meters['ce_loss'].avg:.4f}",
+            'PaC': f"{meters['pac_loss'].avg:.4f}",
+            'SoC': f"{meters['soc_loss'].avg:.4f}",
+            'Acc': f"{meters['acc'].avg:.3f}"
+        })
+        
+        # Optional: Still print detailed progress at intervals
         if batch_idx % print_freq == 0:
             elapsed = time.time() - start_time
-            print(f'Epoch: [{epoch}][{batch_idx}/{len(train_loader)}] '
-                  f'Time: {elapsed:.1f}s '
-                  f'Loss: {meters["loss"].avg:.4f} '
-                  f'CE: {meters["ce_loss"].avg:.4f} '
-                  f'PaC: {meters["pac_loss"].avg:.4f} '
-                  f'SoC: {meters["soc_loss"].avg:.4f} '
-                  f'Acc: {meters["acc"].avg:.3f} '
-                  f'Bal-Acc: {meters["balanced_acc"].avg:.3f}')
+            tqdm.write(f'Epoch: [{epoch}][{batch_idx}/{len(train_loader)}] '
+                      f'Time: {elapsed:.1f}s '
+                      f'Loss: {meters["loss"].avg:.4f} '
+                      f'CE: {meters["ce_loss"].avg:.4f} '
+                      f'PaC: {meters["pac_loss"].avg:.4f} '
+                      f'SoC: {meters["soc_loss"].avg:.4f} '
+                      f'Acc: {meters["acc"].avg:.3f} '
+                      f'Bal-Acc: {meters["balanced_acc"].avg:.3f}')
     
     return {
         'loss': meters['loss'].avg,
@@ -263,7 +277,10 @@ def validate_epoch(model: nn.Module,
     all_targets = []
     
     with torch.no_grad():
-        for images, targets in val_loader:
+        # Create progress bar for validation
+        val_pbar = tqdm(val_loader, desc="Validation", leave=False, unit="batch")
+        
+        for images, targets in val_pbar:
             images = images.to(device, non_blocking=True)
             targets = targets.to(device, non_blocking=True)
             
@@ -283,6 +300,12 @@ def validate_epoch(model: nn.Module,
             meters['loss'].update(loss.item(), batch_size)
             meters['acc'].update(metrics['acc'], batch_size)
             meters['balanced_acc'].update(metrics['balanced_acc'], batch_size)
+            
+            # Update progress bar
+            val_pbar.set_postfix({
+                'Val_Loss': f"{meters['loss'].avg:.4f}",
+                'Val_Acc': f"{meters['acc'].avg:.3f}"
+            })
             
             # Store for confusion matrix
             all_outputs.append(logits.cpu())
