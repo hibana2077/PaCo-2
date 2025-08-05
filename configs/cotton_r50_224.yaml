@@ -1,89 +1,121 @@
-# Test configuration for debugging - short training
 model:
-  K: 4
-  r: 5
-  d: 64
-  backbone_name: "resnet50"
-  num_classes: 80
-  pretrained: true
-  lambda_pac: 0.3
-  eta_soc: 0.1
-  alpha: 0.2
-  beta: 0.05
-  gamma: 0.1
-  top_m_candidates: 64
-  epsilon: 1.0e-4  # Increased for numerical stability
-  tau: 1.0e-4      # Increased for numerical stability
-  use_mahalanobis_warmup: true
-  warmup_epochs: 3
-  use_weighted_ce: true
-  use_semi_hard: true
-  use_class_proto: true
-  proto_momentum: 0.9
+  # === 部位採樣參數 (Part Sampling Parameters) ===
+  K: 4                               # 每張影像提取的部位數量 (Number of parts to extract per image)
+  r: 5                               # 部位視窗半徑，提取 r×r 區域 (Part window radius for r×r region extraction)
+  d: 64                              # 降維後的特徵維度 (Reduced feature dimension after 1x1 conv)
+  
+  # === 模型架構參數 (Model Architecture Parameters) ===
+  backbone_name: "resnet50"  # timm 預訓練模型名稱 (timm pretrained model name)
+  num_classes: 80                    # 分類類別數 (Number of classification classes)
+  pretrained: true                   # 是否使用預訓練權重 (Whether to use pretrained weights)
+  
+  # === 損失函數權重 (Loss Function Weights) ===
+  lambda_pac: 0.3                    # 部位感知對比損失權重 (Part-aware Contrast loss weight)
+  eta_soc: 0.1                       # 二階一致性損失權重 (Second-order Consistency loss weight)
+  
+  # === 對比學習參數 (Contrastive Learning Parameters) ===
+  alpha: 0.2                         # Triplet loss 邊際值 (Triplet loss margin)
+  beta: 0.05                         # 負樣本選擇參數 (Negative sampling parameter)
+  gamma: 0.1                         # 困難負樣本挖掘權重 (Hard negative mining weight)
+  top_m_candidates: 64               # 負樣本候選池大小 (Negative candidates pool size)
+  
+  # === 數值穩定性參數 (Numerical Stability Parameters) ===
+  epsilon: 1.0e-4                    # 協方差矩陣對角加載值，防止奇異 (Diagonal loading for covariance matrix)
+  tau: 1.0e-4                        # 馬氏距離計算穩定常數 (Stability constant for Mahalanobis distance)
+  
+  # === 訓練策略參數 (Training Strategy Parameters) ===
+  use_mahalanobis_warmup: true       # 是否使用馬氏距離預熱 (Whether to use Mahalanobis distance warmup)
+  warmup_epochs: 3                   # 預熱訓練階段數 (Number of warmup epochs)
+  use_weighted_ce: true              # 是否使用加權交叉熵 (Whether to use weighted cross-entropy)
+  use_semi_hard: true                # 是否使用半困難負樣本挖掘 (Whether to use semi-hard negative mining)
+  use_class_proto: true              # 是否使用類別原型 (Whether to use class prototypes)
+  proto_momentum: 0.9                # 類別原型更新動量 (Momentum for class prototype updates)
 
 training:
-  epochs: 100
-  batch_size: 128
-  learning_rate: 0.001
-  weight_decay: 1.0e-4
-  optimizer: "adamw"
-  scheduler: "cosine"
-  warmup_lr: 1.0e-6
-  min_lr: 1.0e-6
+  # === 基本訓練參數 (Basic Training Parameters) ===
+  epochs: 100                        # 總訓練週期數 (Total training epochs)
+  batch_size: 32                     # 批次大小 (Batch size)
+  learning_rate: 0.001               # 初始學習率 (Initial learning rate)
+  weight_decay: 1.0e-4               # 權重衰減 (L2 regularization)
+  optimizer: "adamw"                 # 優化器類型 (Optimizer type)
+  
+  # === 學習率調度參數 (Learning Rate Scheduler Parameters) ===
+  scheduler: "cosine"                # 學習率調度策略 (Learning rate scheduler)
+  warmup_lr: 1.0e-6                  # 預熱階段初始學習率 (Warmup initial learning rate)
+  min_lr: 1.0e-6                     # 最小學習率 (Minimum learning rate)
+  
+  # === 數據增強參數 (Data Augmentation Parameters) ===
   augmentation:
-    resize: 256
-    crop_size: 224
-    horizontal_flip: 0.5
-    color_jitter: 0.1
-    random_erase: 0.1
-  mixed_precision: true
-  channels_last: true
-  compile: false
-  save_frequency: 1
-  log_frequency: 10
-  validate_frequency: 1
+    resize: 256                      # 調整大小 (Resize dimension)
+    crop_size: 224                   # 裁剪大小 (Crop size)
+    horizontal_flip: 0.0             # 水平翻轉機率 (Horizontal flip probability)
+    color_jitter: 0.0                # 顏色抖動強度 (Color jitter strength)
+    random_erase: 0.0                # 隨機擦除機率 (Random erasing probability)
+  
+  # === 性能優化參數 (Performance Optimization Parameters) ===
+  mixed_precision: true              # 是否使用混合精度訓練 (Whether to use mixed precision training)
+  channels_last: true                # 是否使用 channels_last 內存格式 (Whether to use channels_last memory format)
+  compile: false                     # 是否使用 torch.compile 編譯 (Whether to use torch.compile)
+  
+  # === 日誌和保存參數 (Logging and Saving Parameters) ===
+  save_frequency: 10                  # 模型保存頻率（每N個epoch） (Model saving frequency)
+  log_frequency: 10                  # 日誌記錄頻率（每N個batch） (Logging frequency)
+  validate_frequency: 1              # 驗證頻率（每N個epoch） (Validation frequency)
 
 dataset:
-  name: "cotton80"
-  root: "./data"
-  train_split: "train"
-  val_split: "val"
-  test_split: "test"
-  mean: [0.485, 0.456, 0.406]
-  std: [0.229, 0.224, 0.225]
-  num_workers: 4
-  pin_memory: true
-  persistent_workers: true
+  # === 數據集基本配置 (Dataset Basic Configuration) ===
+  name: "cotton80"                   # 數據集名稱 (Dataset name)
+  root: "./data"                     # 數據集根目錄 (Dataset root directory)
+  train_split: "train"               # 訓練集分割名稱 (Training split name)
+  val_split: "val"                   # 驗證集分割名稱 (Validation split name)
+  test_split: "test"                 # 測試集分割名稱 (Test split name)
+  
+  # === 圖像預處理參數 (Image Preprocessing Parameters) ===
+  mean: [0.485, 0.456, 0.406]       # ImageNet 標準化均值 (ImageNet normalization mean)
+  std: [0.229, 0.224, 0.225]        # ImageNet 標準化標準差 (ImageNet normalization std)
+  
+  # === 數據加載參數 (Data Loading Parameters) ===
+  num_workers: 4                     # 數據加載進程數 (Number of data loading workers)
+  pin_memory: true                   # 是否將數據固定在內存中 (Whether to pin memory)
+  persistent_workers: true           # 是否保持工作進程持久化 (Whether to keep workers persistent)
 
 evaluation:
-  metrics: ["accuracy", "top5_accuracy", "f1_score"]
-  save_predictions: false
+  # === 評估指標配置 (Evaluation Metrics Configuration) ===
+  metrics: ["accuracy", "top5_accuracy", "f1_score"]  # 評估指標列表 (List of evaluation metrics)
+  save_predictions: false            # 是否保存預測結果 (Whether to save predictions)
 
 optimization:
+  # === 高優先級算法優化 (High Priority Algorithm Optimizations) ===
   high_priority_optimizations:
-    vectorized_pac: true
-    two_stage_negatives: true
-    frobenius_soc: true
-    small_dimensions: true
-    limited_negatives_pool: true
+    vectorized_pac: true             # 向量化部位感知對比計算 (Vectorized part-aware contrast computation)
+    two_stage_negatives: true        # 兩階段負樣本選擇策略 (Two-stage negative sampling strategy)
+    frobenius_soc: true              # 使用 Frobenius 範數計算 SoC (Use Frobenius norm for SoC computation)
+    small_dimensions: true           # 小維度優化（d=64） (Small dimension optimization)
+    limited_negatives_pool: true     # 限制負樣本池大小 (Limited negative samples pool)
+  
+  # === 系統級優化 (System Level Optimizations) ===
   system_optimizations:
-    mixed_precision: true
-    channels_last: true
-    torch_compile: false
-    gradient_checkpointing: false
+    mixed_precision: true            # 混合精度計算 (Mixed precision computation)
+    channels_last: true              # channels_last 內存布局 (channels_last memory layout)
+    torch_compile: false             # PyTorch 2.0 編譯優化 (PyTorch 2.0 compile optimization)
+    gradient_checkpointing: false    # 梯度檢查點節省內存 (Gradient checkpointing for memory saving)
+  
+  # === 性能分析配置 (Profiling Configuration) ===
   profiling:
-    enabled: false
-    log_memory: false
-    trace_activities: []
+    enabled: false                   # 是否啟用性能分析 (Whether to enable profiling)
+    log_memory: false                # 是否記錄內存使用 (Whether to log memory usage)
+    trace_activities: []             # 追蹤活動列表 (List of activities to trace)
 
 experiment:
-  name: "paco2_test"
-  tags: ["test", "debug"]
-  notes: "Test run for debugging"
+  # === 實驗配置 (Experiment Configuration) ===
+  name: "paco2_test"                 # 實驗名稱 (Experiment name)
+  tags: ["test", "debug"]            # 實驗標籤 (Experiment tags)
+  notes: "Test run for debugging"    # 實驗備註 (Experiment notes)
 
 debug:
-  enabled: false
-  profile_forward: false
-  profile_backward: false
-  check_gradients: false
-  print_model_info: true
+  # === 調試配置 (Debug Configuration) ===
+  enabled: false                     # 是否啟用調試模式 (Whether to enable debug mode)
+  profile_forward: false             # 是否分析前向傳播 (Whether to profile forward pass)
+  profile_backward: false            # 是否分析反向傳播 (Whether to profile backward pass)
+  check_gradients: false             # 是否檢查梯度 (Whether to check gradients)
+  print_model_info: true             # 是否打印模型信息 (Whether to print model info)
