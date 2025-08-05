@@ -13,7 +13,7 @@ module load cuda/12.6.2
 
 nvidia-smi >> gpu-info.txt
 
-cd $PBS_O_WORKDIR
+cd ..
 
 # Run training
-python train_fixed.py --config configs/ufg_base.yaml
+python train.py --config configs/cotton_r50_224.yaml

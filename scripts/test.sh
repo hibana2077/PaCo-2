@@ -16,5 +16,5 @@ nvidia-smi >> gpu-info.txt
 cd ..
 
 source /scratch/rp06/sl5952/PaCo-2/.venv/bin/activate
-python3 test_implementation.py >> out_test.txt
+python3 test_optimization.py --batch-size 4 --iterations 2 >> out_test.txt
 
