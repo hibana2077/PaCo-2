@@ -17,7 +17,7 @@ import pandas as pd
 sys.path.append(str(Path(__file__).parent / 'src'))
 
 from src.dataset.ufgvc import UFGVCDataset
-from src.models import PaCoModel
+from src.models.optimized_paco_model import OptimizedPaCoModel
 from src.train_utils import load_checkpoint, compute_metrics
 from src.data_utils import create_ufgvc_transforms
 
@@ -25,6 +25,7 @@ from src.data_utils import create_ufgvc_transforms
 def evaluate_model(model: nn.Module, 
                   test_loader: DataLoader, 
                   device: torch.device,
+                  num_classes: int,
                   class_names: list = None) -> dict:
     """Evaluate model on test set"""
     
@@ -42,7 +43,7 @@ def evaluate_model(model: nn.Module,
             images = images.to(device, non_blocking=True)
             targets = targets.to(device, non_blocking=True)
             
-            # Single view inference
+            # Single view inference (evaluation mode)
             outputs = model(images)
             logits = outputs['logits']
             
@@ -61,7 +62,7 @@ def evaluate_model(model: nn.Module,
     all_logits = torch.cat(all_logits, dim=0)
     all_targets_tensor = torch.tensor(all_targets)
     
-    metrics = compute_metrics(all_logits, all_targets_tensor, model.classifier.out_features)
+    metrics = compute_metrics(all_logits, all_targets_tensor, num_classes)
     
     # Additional metrics
     cm = confusion_matrix(all_targets, all_predictions)
@@ -131,7 +132,7 @@ def save_classification_report(report: dict, save_path: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Evaluate PaCo-2 Model')
+    parser = argparse.ArgumentParser(description='Evaluate Optimized PaCo-2 Model')
     parser.add_argument('--checkpoint', type=str, required=True,
                        help='Path to model checkpoint')
     parser.add_argument('--config', type=str, required=True,
@@ -163,10 +164,10 @@ def main():
     
     # Create dataset
     dataset_config = config['dataset']
-    data_config = config['data']
+    training_config = config['training']
     
     test_transform = create_ufgvc_transforms(
-        image_size=data_config['image_size'],
+        image_size=training_config['augmentation']['crop_size'],
         split=args.dataset,
         use_two_views=False
     )
@@ -181,10 +182,10 @@ def main():
     
     test_loader = DataLoader(
         test_dataset,
-        batch_size=data_config['batch_size'],
+        batch_size=training_config['batch_size'],
         shuffle=False,
-        num_workers=data_config['num_workers'],
-        pin_memory=True
+        num_workers=dataset_config['num_workers'],
+        pin_memory=dataset_config['pin_memory']
     )
     
     print(f"Test dataset: {len(test_dataset)} samples")
@@ -194,12 +195,27 @@ def main():
     model_config = config['model']
     num_classes = len(test_dataset.classes)
     
-    model = PaCoModel(
-        backbone_name=model_config['backbone'],
+    model = OptimizedPaCoModel(
+        backbone_name=model_config['backbone_name'],
         num_classes=num_classes,
         pretrained=False,  # Will load from checkpoint
-        **{k: v for k, v in model_config.items() 
-           if k not in ['backbone', 'pretrained']}
+        K=model_config['K'],
+        r=model_config['r'],
+        d=model_config['d'],
+        lambda_pac=model_config['lambda_pac'],
+        eta_soc=model_config['eta_soc'],
+        alpha=model_config['alpha'],
+        beta=model_config['beta'],
+        gamma=model_config['gamma'],
+        top_m_candidates=model_config['top_m_candidates'],
+        epsilon=model_config['epsilon'],
+        tau=model_config['tau'],
+        use_mahalanobis_warmup=model_config['use_mahalanobis_warmup'],
+        warmup_epochs=model_config['warmup_epochs'],
+        use_weighted_ce=model_config['use_weighted_ce'],
+        use_semi_hard=model_config['use_semi_hard'],
+        use_class_proto=model_config['use_class_proto'],
+        proto_momentum=model_config['proto_momentum']
     )
     
     # Load checkpoint
@@ -212,7 +228,7 @@ def main():
     
     # Evaluate model
     print("Evaluating model...")
-    results = evaluate_model(model, test_loader, device, test_dataset.classes)
+    results = evaluate_model(model, test_loader, device, num_classes, test_dataset.classes)
     
     # Print results
     print(f"\nEvaluation Results:")
