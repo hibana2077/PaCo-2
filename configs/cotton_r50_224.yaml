@@ -6,14 +6,14 @@ model:
   backbone_name: "resnet50"
   num_classes: 80
   pretrained: true
-  lambda_pac: 1.0
+  lambda_pac: 0.3
   eta_soc: 0.1
   alpha: 0.2
   beta: 0.05
   gamma: 0.1
   top_m_candidates: 64
-  epsilon: 1.0e-3  # Increased for numerical stability
-  tau: 1.0e-3      # Increased for numerical stability
+  epsilon: 1.0e-4  # Increased for numerical stability
+  tau: 1.0e-4      # Increased for numerical stability
   use_mahalanobis_warmup: true
   warmup_epochs: 3
   use_weighted_ce: true
