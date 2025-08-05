@@ -1,0 +1,12 @@
+# Ablation study configuration - Testing different SoC metrics
+
+# Inherit from base
+_base_: "ufg_base.yaml"
+
+# Override for ablation study
+model:
+  metric: "log-euclidean"  # Test log-euclidean instead of frobenius
+
+# Reduce epochs for ablation
+training:
+  epochs: 50

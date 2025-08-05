@@ -1,0 +1,77 @@
+# PaCo-2 Base Configuration for UFGVC
+# Following experimental setup from docs/exp_data.md
+
+# Dataset configuration
+dataset:
+  name: "cotton80"  # Available: cotton80, soybean, soy_ageing_r1, etc.
+  root: "./data"
+  download: true
+
+# Data processing configuration
+data:
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+
+# Model configuration
+model:
+  backbone: "resnet50"  # timm model name
+  pretrained: true
+  
+  # Part sampling parameters (from docs/pesudo_code.md)
+  K: 4            # Number of parts
+  r: 5            # Part window size
+  d: 64           # Reduced dimension
+  
+  # Loss weights (from docs/exp_data.md)
+  lambda_pac: 1.0   # PaC loss weight
+  eta_soc: 0.1      # SoC loss weight
+  alpha: 0.2        # Triplet margin
+  beta: 0.05        # Prototype regularization
+  gamma: 0.1        # Weighted CE factor
+  
+  # Technical parameters
+  epsilon: 1.0e-5   # Covariance diagonal loading
+  tau: 1.0e-5       # Sigma_plus regularization
+  metric: "fro"     # SPD distance metric (fro, log-euclidean, stein)
+  
+  # Warmup and optional features
+  use_mahalanobis_warmup: true
+  warmup_epochs: 3
+  use_weighted_ce: true
+  use_semi_hard: true
+  use_class_proto: true
+  proto_momentum: 0.9
+
+# Optimizer configuration (from docs/exp_data.md)
+optimizer:
+  name: "adamw"     # adamw or sgd
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  # For SGD:
+  momentum: 0.9
+  nesterov: true
+
+# Learning rate scheduler
+scheduler:
+  use_scheduler: true
+  name: "cosine"    # cosine, step, multistep
+  T_max: 100        # For cosine
+  eta_min: 1.0e-6
+  # For step/multistep:
+  step_size: 30
+  milestones: [60, 80]
+  gamma: 0.1
+
+# Training configuration
+training:
+  epochs: 100
+  seed: 3407        # Fixed seed for reproducibility
+  save_dir: "./runs"
+  print_freq: 100   # Print frequency
+  
+# Evaluation settings
+evaluation:
+  save_confusion_matrix: true
+  save_embeddings: true
+  compute_fisher_ratio: true

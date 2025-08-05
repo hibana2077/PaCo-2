@@ -1,0 +1,16 @@
+# PaCo-2 Configuration for ConvNeXt-T backbone
+# Extends base config with different backbone
+
+# Inherit from base
+_base_: "ufg_base.yaml"
+
+# Override model settings
+model:
+  backbone: "convnext_tiny"
+  
+# Adjust for smaller model
+data:
+  batch_size: 64  # Can use larger batch size
+
+optimizer:
+  lr: 2.0e-3      # Slightly higher LR for smaller model

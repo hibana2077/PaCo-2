@@ -16,4 +16,4 @@ nvidia-smi >> gpu-info.txt
 cd ..
 
 source /scratch/rp06/sl5952/PaCo-2/.venv/bin/activate
-python3 train.py --config configs/ufg_base.yaml >> out_train_v100.txt
+python3 train_clean.py --config configs/ufg_base.yaml >> out_train_v100.txt
