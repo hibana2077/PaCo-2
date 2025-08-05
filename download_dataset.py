@@ -7,9 +7,9 @@ It provides an interface to download specific datasets to specified root directo
 maintaining compatibility with the main training pipeline.
 
 Usage:
-    python download_dataset.py --dataset cotton80 --root ./data
-    python download_dataset.py --list  # List available datasets
-    python download_dataset.py --info cotton80  # Get dataset information
+    python3 download_dataset.py --dataset cotton80 --root ./data
+    python3 download_dataset.py --list  # List available datasets
+    python3 download_dataset.py --info cotton80  # Get dataset information
 """
 
 import argparse

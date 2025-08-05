@@ -22,7 +22,7 @@ model:
   proto_momentum: 0.9
 
 training:
-  epochs: 2  # Very short for testing
+  epochs: 100 
   batch_size: 32
   learning_rate: 0.001
   weight_decay: 1.0e-4
