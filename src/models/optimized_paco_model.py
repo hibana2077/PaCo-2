@@ -174,18 +174,36 @@ class OptimizedPaCoModel(nn.Module):
             Sigma1, mu1 = CovarUtils.compute_covariance(Z1t, self.epsilon)
             Sigma2, mu2 = CovarUtils.compute_covariance(Z2t, self.epsilon)
             
-            # Sigma_plus 附加正則化
+            # Sigma_plus 附加正則化（增強穩定性）
             Sigma_plus = 0.5 * (Sigma1 + Sigma2)
             I = torch.eye(self.d, device=Sigma_plus.device).unsqueeze(0).expand_as(Sigma_plus)
-            Sigma_plus = Sigma_plus + self.tau * I
+            # 使用更強的正則化確保正定性
+            reg_strength = max(self.tau, 1e-3)  # 確保最小正則化強度
+            Sigma_plus = Sigma_plus + reg_strength * I
+            
+            # 額外檢查：確保所有批次的協方差矩陣都是正定的
+            for b in range(Sigma_plus.shape[0]):
+                eigenvals = torch.linalg.eigvals(Sigma_plus[b]).real
+                min_eigenval = eigenvals.min()
+                if min_eigenval <= 1e-6:
+                    additional_reg = abs(min_eigenval) + 1e-3
+                    Sigma_plus[b] += additional_reg * torch.eye(self.d, device=Sigma_plus.device)
             
             # 部位匹配（熱身後使用 Mahalanobis）
-            if self.use_mahalanobis_warmup and self.current_epoch >= self.warmup_epochs:
-                self.matcher.use_cosine = False
-                matching = self.matcher(Z1t, Z2t, Sigma_plus)
-            else:
-                self.matcher.use_cosine = True
-                matching = self.matcher(Z1t, Z2t)
+            try:
+                if self.use_mahalanobis_warmup and self.current_epoch >= self.warmup_epochs:
+                    self.matcher.use_cosine = False
+                    matching = self.matcher(Z1t, Z2t, Sigma_plus)
+                else:
+                    self.matcher.use_cosine = True
+                    matching = self.matcher(Z1t, Z2t)
+            except Exception as e:
+                if "not positive-definite" in str(e) or "cholesky" in str(e).lower():
+                    print(f"Warning: Mahalanobis matching failed, falling back to cosine distance")
+                    self.matcher.use_cosine = True
+                    matching = self.matcher(Z1t, Z2t)
+                else:
+                    raise e
             
             # 創建負對池
             negatives_pool = self._create_optimized_negatives_pool(Z1t, Z2t)

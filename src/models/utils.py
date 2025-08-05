@@ -130,11 +130,50 @@ class PartSampler(nn.Module):
 
 class HungarianMatcher(nn.Module):
     """
-    Hungarian matching for part correspondence between two views
+    Hungarian matching for part correspondence between two views with robust Mahalanobis distance
     """
     def __init__(self, use_cosine: bool = True):
         super().__init__()
         self.use_cosine = use_cosine
+
+    def _robust_mahalanobis_distance(self, diff: torch.Tensor, Sigma: torch.Tensor) -> torch.Tensor:
+        """
+        Compute Mahalanobis distance with robust numerical handling
+        
+        Args:
+            diff: Difference vector (d,)
+            Sigma: Covariance matrix (d, d)
+            
+        Returns:
+            distance: Mahalanobis distance (scalar)
+        """
+        try:
+            # Try Cholesky decomposition first (most efficient)
+            L = torch.linalg.cholesky(Sigma)
+            y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
+            return torch.norm(y, p=2)
+        except torch._C._LinAlgError:
+            # Fallback 1: Regularize and try Cholesky again
+            try:
+                d = Sigma.shape[0]
+                reg_strength = 1e-3
+                Sigma_reg = Sigma + reg_strength * torch.eye(d, device=Sigma.device)
+                L = torch.linalg.cholesky(Sigma_reg)
+                y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
+                return torch.norm(y, p=2)
+            except torch._C._LinAlgError:
+                # Fallback 2: Use eigendecomposition
+                try:
+                    eigenvals, eigenvecs = torch.linalg.eigh(Sigma)
+                    # Clamp negative eigenvalues
+                    eigenvals = torch.clamp(eigenvals, min=1e-6)
+                    # Compute inverse via eigendecomposition
+                    Sigma_inv = eigenvecs @ torch.diag(1.0 / eigenvals) @ eigenvecs.T
+                    return torch.sqrt(torch.dot(diff, Sigma_inv @ diff))
+                except:
+                    # Fallback 3: Use Euclidean distance
+                    print("Warning: All Mahalanobis methods failed, using Euclidean distance")
+                    return torch.norm(diff, p=2)
 
     def forward(self, Z1: torch.Tensor, Z2: torch.Tensor, 
                 Sigma_plus: Optional[torch.Tensor] = None) -> torch.Tensor:
@@ -158,15 +197,13 @@ class HungarianMatcher(nn.Module):
                 z2_norm = F.normalize(Z2[b], p=2, dim=1)
                 cost = 1 - torch.mm(z1_norm, z2_norm.t())
             else:
-                # Mahalanobis distance cost matrix
+                # Robust Mahalanobis distance cost matrix
                 cost = torch.zeros(K, K, device=Z1.device)
+                
                 for i in range(K):
                     for j in range(K):
                         diff = Z1[b, i] - Z2[b, j]
-                        # Use Cholesky for numerical stability
-                        L = torch.linalg.cholesky(Sigma_plus[b])
-                        y = torch.linalg.solve_triangular(L, diff.unsqueeze(-1), upper=False)
-                        cost[i, j] = torch.norm(y, p=2)
+                        cost[i, j] = self._robust_mahalanobis_distance(diff, Sigma_plus[b])
             
             # Solve assignment problem
             cost_np = cost.detach().cpu().numpy()
@@ -182,13 +219,13 @@ class CovarUtils:
     """
     
     @staticmethod
-    def compute_covariance(Zt: torch.Tensor, epsilon: float = 1e-5) -> Tuple[torch.Tensor, torch.Tensor]:
+    def compute_covariance(Zt: torch.Tensor, epsilon: float = 1e-4) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Compute sample covariance with diagonal loading
         
         Args:
             Zt: Part features (B, K, d)
-            epsilon: Diagonal loading factor
+            epsilon: Diagonal loading factor (increased default for stability)
             
         Returns:
             Sigma: Covariance matrices (B, d, d)
@@ -205,9 +242,17 @@ class CovarUtils:
         # Compute covariance
         Sigma = torch.bmm(Zh.transpose(-1, -2), Zh) / max(1, K - 1)  # (B, d, d)
         
-        # Add diagonal loading for numerical stability
+        # Add stronger diagonal loading for numerical stability
         I = torch.eye(d, device=Zt.device).unsqueeze(0).expand(B, -1, -1)
         Sigma = Sigma + epsilon * I
+        
+        # Additional check: ensure minimum eigenvalue
+        for b in range(B):
+            eigenvals = torch.linalg.eigvals(Sigma[b]).real
+            min_eigenval = eigenvals.min()
+            if min_eigenval <= 0:
+                additional_reg = abs(min_eigenval) + epsilon
+                Sigma[b] += additional_reg * torch.eye(d, device=Zt.device)
         
         return Sigma, mu
     

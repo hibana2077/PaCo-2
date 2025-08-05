@@ -237,12 +237,21 @@ class OptimizedTrainer:
             
             # 前向傳播
             with torch.amp.autocast(device_type='cuda') if self.scaler else torch.amp.autocast(device_type='cuda', enabled=False):
-                outputs = self.model(x1, x2, targets)
-                
-                logits = outputs['logits']
-                total_loss = outputs['total']
-                pac_loss = outputs['pac']
-                soc_loss = outputs['soc']
+                try:
+                    outputs = self.model(x1, x2, targets)
+                    
+                    logits = outputs['logits']
+                    total_loss = outputs['total']
+                    pac_loss = outputs['pac']
+                    soc_loss = outputs['soc']
+                except Exception as e:
+                    if "not positive-definite" in str(e) or "cholesky" in str(e).lower():
+                        print(f"Warning: Numerical instability detected at batch {i}, skipping batch")
+                        print(f"Error: {e}")
+                        continue
+                    else:
+                        # Re-raise other exceptions
+                        raise e
             
             # 反向傳播
             self.optimizer.zero_grad()
