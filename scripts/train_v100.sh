@@ -12,8 +12,8 @@ module load cuda/12.6.2
 # module load python3/3.10.4
 
 nvidia-smi >> gpu-info.txt
+source /scratch/rp06/sl5952/PaCo-2/.venv/bin/activate
 
 cd ..
-
 # Run training
 python train.py --config configs/cotton_r50_224.yaml
