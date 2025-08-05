@@ -339,3 +339,64 @@ class TwoViewDataset:
     @property
     def class_to_idx(self):
         return getattr(self.dataset, 'class_to_idx', None)
+
+
+def get_dataloaders(dataset_name: str, data_root: str, batch_size: int, 
+                   num_workers: int, pin_memory: bool, augmentation_config: dict):
+    """Create train and validation data loaders for optimized training"""
+    from torch.utils.data import DataLoader
+    from src.dataset.ufgvc import UFGVCDataset
+    
+    # Create transforms based on augmentation config
+    train_transform = create_ufgvc_transforms(
+        image_size=augmentation_config['crop_size'],
+        split='train',
+        use_two_views=True
+    )
+    
+    val_transform = create_ufgvc_transforms(
+        image_size=augmentation_config['crop_size'],
+        split='val',
+        use_two_views=False
+    )
+    
+    # Create datasets
+    train_dataset = UFGVCDataset(
+        dataset_name=dataset_name,
+        root=data_root,
+        split='train',
+        download=True
+    )
+    
+    val_dataset = UFGVCDataset(
+        dataset_name=dataset_name,
+        root=data_root,
+        split='val',
+        download=True
+    )
+    
+    # Wrap with two-view transform for training
+    train_dataset = TwoViewDataset(train_dataset, train_transform)
+    val_dataset.transform = val_transform
+    
+    # Create data loaders
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=True,
+        drop_last=True
+    )
+    
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=True
+    )
+    
+    return train_loader, val_loader

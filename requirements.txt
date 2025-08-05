@@ -19,6 +19,13 @@ scikit-image
 pyarrow
 fastparquet
 
+# Experiment tracking and visualization
+wandb
+tensorboard
+
+# Configuration management
+pyyaml
+
 # HTTP requests
 requests
 
