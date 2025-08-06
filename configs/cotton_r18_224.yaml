@@ -1,8 +1,8 @@
 model:
   # === 部位採樣參數 (Part Sampling Parameters) ===
-  K: 4                               # 每張影像提取的部位數量 (Number of parts to extract per image)
+  K: 8                               # 每張影像提取的部位數量 (Number of parts to extract per image)
   r: 5                               # 部位視窗半徑，提取 r×r 區域 (Part window radius for r×r region extraction)
-  d: 64                              # 降維後的特徵維度 (Reduced feature dimension after 1x1 conv)
+  d: 32                              # 降維後的特徵維度 (Reduced feature dimension after 1x1 conv)
   
   # === 模型架構參數 (Model Architecture Parameters) ===
   backbone_name: "resnet18"  # timm 預訓練模型名稱 (timm pretrained model name)
@@ -20,12 +20,12 @@ model:
   top_m_candidates: 64               # 負樣本候選池大小 (Negative candidates pool size)
   
   # === 數值穩定性參數 (Numerical Stability Parameters) ===
-  epsilon: 1.0e-4                    # 協方差矩陣對角加載值，防止奇異 (Diagonal loading for covariance matrix)
-  tau: 1.0e-4                        # 馬氏距離計算穩定常數 (Stability constant for Mahalanobis distance)
+  epsilon: 1.0e-2                    # 協方差矩陣對角加載值，防止奇異 (Diagonal loading for covariance matrix)
+  tau: 1.0e-2                        # 馬氏距離計算穩定常數 (Stability constant for Mahalanobis distance)
   
   # === 訓練策略參數 (Training Strategy Parameters) ===
   use_mahalanobis_warmup: true       # 是否使用馬氏距離預熱 (Whether to use Mahalanobis distance warmup)
-  warmup_epochs: 3                   # 預熱訓練階段數 (Number of warmup epochs)
+  warmup_epochs: 20                  # 預熱訓練階段數 (Number of warmup epochs)
   use_weighted_ce: true              # 是否使用加權交叉熵 (Whether to use weighted cross-entropy)
   use_semi_hard: true                # 是否使用半困難負樣本挖掘 (Whether to use semi-hard negative mining)
   use_class_proto: true              # 是否使用類別原型 (Whether to use class prototypes)
