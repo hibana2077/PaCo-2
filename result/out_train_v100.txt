@@ -1,0 +1,337 @@
+Using device: cuda
+Enabling channels_last memory format
+Warning: Forcing K from 8 to 4 for optimization
+OptimizedPaCoLoss initialized:
+  - PaC: Vectorized whitening + Two-stage negative sampling (M=32)
+  - SoC: Fixed Frobenius distance
+  - Weights: lambda_pac=0.3, eta_soc=0.1
+OptimizedPaCoModel initialized:
+  Backbone: resnet18
+  Feature dim: 512 -> 32
+  Feature size: torch.Size([7, 7])
+  Classes: 80
+  Parts (K): 4, Window (r): 5
+  Optimizations: K<=4, d<=64, Frobenius SoC, Vectorized PaC
+  Top-M candidates: 32
+
+=== 優化版模型信息 ===
+backbone: ResNet
+num_classes: 80
+feature_dim: 512
+reduced_dim: 32
+num_parts: 4
+total_params: 11746937
+trainable_params: 11746937
+current_epoch: 0
+using_mahalanobis: False
+class_prototypes_initialized: 0.0
+
+=== 啟用的優化 ===
+✓ small_params: K=4<=4, d=32<=64
+✓ vectorized_pac: 一次白化向量化
+✓ two_stage_negatives: 兩段式篩選(M=32)
+✓ frobenius_soc: Frobenius 距離 SoC
+✓ limited_negatives_pool: 限制負對池大小
+==================================================
+Dataset: cotton80
+Split: train
+Samples: 240
+Classes: 80
+Class names: ['1', '10', '11', '12', '13', '14', '15', '16', '17', '18']...
+Dataset: cotton80
+Split: val
+Samples: 240
+Classes: 80
+Class names: ['1', '10', '11', '12', '13', '14', '15', '16', '17', '18']...
+Dataset: cotton80
+Train batches: 7, Val batches: 8
+Batch size: 32
+開始優化版 PaCo-2 訓練...
+總 epochs: 100
+Epoch: [0][0/7]	Time 9.213 (9.213)	Data 0.654 (0.654)	Loss 12.3556 (12.3556)	PaC 0.5364 (0.5364)	SoC 5.9009 (5.9009)	Acc@1 0.000 (0.000)
+Val: [0] Time 0.091	Loss 4.3855	Acc@1 1.667	Acc@5 5.833
+New best model saved with accuracy: 1.667%
+Epoch: [1][0/7]	Time 2.883 (2.883)	Data 0.382 (0.382)	Loss 7.1351 (7.1351)	PaC 0.0704 (0.0704)	SoC 0.5207 (0.5207)	Acc@1 6.250 (6.250)
+Val: [1] Time 0.054	Loss 4.3822	Acc@1 1.667	Acc@5 6.667
+Epoch: [2][0/7]	Time 3.105 (3.105)	Data 0.424 (0.424)	Loss 5.3433 (5.3433)	PaC 0.1288 (0.1288)	SoC 0.0515 (0.0515)	Acc@1 6.250 (6.250)
+Val: [2] Time 0.053	Loss 4.3811	Acc@1 2.917	Acc@5 6.667
+New best model saved with accuracy: 2.917%
+Epoch: [3][0/7]	Time 3.218 (3.218)	Data 0.380 (0.380)	Loss 4.7233 (4.7233)	PaC 0.5494 (0.5494)	SoC 0.0145 (0.0145)	Acc@1 3.125 (3.125)
+Val: [3] Time 0.054	Loss 4.3816	Acc@1 1.667	Acc@5 7.083
+Epoch: [4][0/7]	Time 2.948 (2.948)	Data 0.404 (0.404)	Loss 4.3601 (4.3601)	PaC 0.3634 (0.3634)	SoC 0.0094 (0.0094)	Acc@1 0.000 (0.000)
+Val: [4] Time 0.051	Loss 4.3818	Acc@1 1.667	Acc@5 7.917
+Epoch: [5][0/7]	Time 2.988 (2.988)	Data 0.371 (0.371)	Loss 4.1738 (4.1738)	PaC 0.2376 (0.2376)	SoC 0.0046 (0.0046)	Acc@1 3.125 (3.125)
+Val: [5] Time 0.056	Loss 4.3823	Acc@1 1.250	Acc@5 7.083
+Epoch: [6][0/7]	Time 3.064 (3.064)	Data 0.422 (0.422)	Loss 4.1166 (4.1166)	PaC 0.2464 (0.2464)	SoC 0.0038 (0.0038)	Acc@1 3.125 (3.125)
+Val: [6] Time 0.054	Loss 4.3823	Acc@1 0.833	Acc@5 5.833
+Epoch: [7][0/7]	Time 2.825 (2.825)	Data 0.366 (0.366)	Loss 4.0589 (4.0589)	PaC 0.1978 (0.1978)	SoC 0.0021 (0.0021)	Acc@1 0.000 (0.000)
+Val: [7] Time 0.052	Loss 4.3823	Acc@1 0.833	Acc@5 6.250
+Epoch: [8][0/7]	Time 2.847 (2.847)	Data 0.371 (0.371)	Loss 4.0304 (4.0304)	PaC 0.2003 (0.2003)	SoC 0.0012 (0.0012)	Acc@1 0.000 (0.000)
+Val: [8] Time 0.052	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch: [9][0/7]	Time 3.005 (3.005)	Data 0.412 (0.412)	Loss 4.0289 (4.0289)	PaC 0.1827 (0.1827)	SoC 0.0009 (0.0009)	Acc@1 0.000 (0.000)
+Val: [9] Time 0.055	Loss 4.3823	Acc@1 0.417	Acc@5 6.250
+Epoch: [10][0/7]	Time 2.870 (2.870)	Data 0.390 (0.390)	Loss 4.0314 (4.0314)	PaC 0.2034 (0.2034)	SoC 0.0003 (0.0003)	Acc@1 0.000 (0.000)
+Val: [10] Time 0.052	Loss 4.3823	Acc@1 0.833	Acc@5 6.250
+Epoch: [11][0/7]	Time 2.956 (2.956)	Data 0.442 (0.442)	Loss 4.0138 (4.0138)	PaC 0.2108 (0.2108)	SoC 0.0003 (0.0003)	Acc@1 0.000 (0.000)
+Val: [11] Time 0.054	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch: [12][0/7]	Time 2.912 (2.912)	Data 0.366 (0.366)	Loss 4.0137 (4.0137)	PaC 0.2027 (0.2027)	SoC 0.0001 (0.0001)	Acc@1 0.000 (0.000)
+Val: [12] Time 0.053	Loss 4.3825	Acc@1 1.667	Acc@5 6.250
+Epoch: [13][0/7]	Time 2.966 (2.966)	Data 0.376 (0.376)	Loss 4.0118 (4.0118)	PaC 0.1993 (0.1993)	SoC 0.0001 (0.0001)	Acc@1 0.000 (0.000)
+Val: [13] Time 0.055	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch: [14][0/7]	Time 2.872 (2.872)	Data 0.426 (0.426)	Loss 4.0144 (4.0144)	PaC 0.2119 (0.2119)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [14] Time 0.054	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch: [15][0/7]	Time 3.094 (3.094)	Data 0.380 (0.380)	Loss 4.0088 (4.0088)	PaC 0.1992 (0.1992)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [15] Time 0.055	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch: [16][0/7]	Time 3.145 (3.145)	Data 0.406 (0.406)	Loss 4.0085 (4.0085)	PaC 0.2001 (0.2001)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [16] Time 0.067	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch: [17][0/7]	Time 3.523 (3.523)	Data 0.452 (0.452)	Loss 4.0011 (4.0011)	PaC 0.2025 (0.2025)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [17] Time 0.078	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch: [18][0/7]	Time 2.950 (2.950)	Data 0.432 (0.432)	Loss 4.0023 (4.0023)	PaC 0.2063 (0.2063)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [18] Time 0.058	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch: [19][0/7]	Time 2.971 (2.971)	Data 0.401 (0.401)	Loss 4.0066 (4.0066)	PaC 0.2067 (0.2067)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [19] Time 0.053	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 20: Switching to Mahalanobis distance for matching
+Epoch: [20][0/7]	Time 3.004 (3.004)	Data 0.422 (0.422)	Loss 4.0073 (4.0073)	PaC 0.2100 (0.2100)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [20] Time 0.051	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 21: Switching to Mahalanobis distance for matching
+Epoch: [21][0/7]	Time 3.144 (3.144)	Data 0.425 (0.425)	Loss 4.0011 (4.0011)	PaC 0.2022 (0.2022)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [21] Time 0.051	Loss 4.3821	Acc@1 0.833	Acc@5 6.250
+Epoch 22: Switching to Mahalanobis distance for matching
+Epoch: [22][0/7]	Time 3.167 (3.167)	Data 0.408 (0.408)	Loss 4.0119 (4.0119)	PaC 0.2017 (0.2017)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [22] Time 0.055	Loss 4.3824	Acc@1 0.833	Acc@5 6.250
+Epoch 23: Switching to Mahalanobis distance for matching
+Epoch: [23][0/7]	Time 3.150 (3.150)	Data 0.422 (0.422)	Loss 4.0079 (4.0079)	PaC 0.2027 (0.2027)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [23] Time 0.052	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 24: Switching to Mahalanobis distance for matching
+Epoch: [24][0/7]	Time 3.195 (3.195)	Data 0.417 (0.417)	Loss 4.0018 (4.0018)	PaC 0.1990 (0.1990)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [24] Time 0.052	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 25: Switching to Mahalanobis distance for matching
+Epoch: [25][0/7]	Time 3.079 (3.079)	Data 0.378 (0.378)	Loss 4.0106 (4.0106)	PaC 0.1942 (0.1942)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [25] Time 0.050	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 26: Switching to Mahalanobis distance for matching
+Epoch: [26][0/7]	Time 2.949 (2.949)	Data 0.393 (0.393)	Loss 4.0110 (4.0110)	PaC 0.2223 (0.2223)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [26] Time 0.052	Loss 4.3825	Acc@1 1.250	Acc@5 5.833
+Epoch 27: Switching to Mahalanobis distance for matching
+Epoch: [27][0/7]	Time 2.975 (2.975)	Data 0.352 (0.352)	Loss 4.0081 (4.0081)	PaC 0.2015 (0.2015)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [27] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 28: Switching to Mahalanobis distance for matching
+Epoch: [28][0/7]	Time 3.228 (3.228)	Data 0.444 (0.444)	Loss 4.0105 (4.0105)	PaC 0.2050 (0.2050)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [28] Time 0.052	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 29: Switching to Mahalanobis distance for matching
+Epoch: [29][0/7]	Time 3.103 (3.103)	Data 0.415 (0.415)	Loss 4.0123 (4.0123)	PaC 0.2022 (0.2022)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [29] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 30: Switching to Mahalanobis distance for matching
+Epoch: [30][0/7]	Time 3.016 (3.016)	Data 0.367 (0.367)	Loss 4.0050 (4.0050)	PaC 0.2008 (0.2008)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [30] Time 0.048	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 31: Switching to Mahalanobis distance for matching
+Epoch: [31][0/7]	Time 2.991 (2.991)	Data 0.379 (0.379)	Loss 3.9987 (3.9987)	PaC 0.1944 (0.1944)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [31] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 5.833
+Epoch 32: Switching to Mahalanobis distance for matching
+Epoch: [32][0/7]	Time 2.921 (2.921)	Data 0.375 (0.375)	Loss 4.0014 (4.0014)	PaC 0.1991 (0.1991)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [32] Time 0.049	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 33: Switching to Mahalanobis distance for matching
+Epoch: [33][0/7]	Time 3.084 (3.084)	Data 0.366 (0.366)	Loss 4.0103 (4.0103)	PaC 0.2073 (0.2073)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [33] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 34: Switching to Mahalanobis distance for matching
+Epoch: [34][0/7]	Time 3.033 (3.033)	Data 0.379 (0.379)	Loss 4.0029 (4.0029)	PaC 0.2006 (0.2006)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [34] Time 0.052	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 35: Switching to Mahalanobis distance for matching
+Epoch: [35][0/7]	Time 3.071 (3.071)	Data 0.395 (0.395)	Loss 4.0067 (4.0067)	PaC 0.2033 (0.2033)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [35] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 36: Switching to Mahalanobis distance for matching
+Epoch: [36][0/7]	Time 3.404 (3.404)	Data 0.351 (0.351)	Loss 4.0070 (4.0070)	PaC 0.2012 (0.2012)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [36] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.667
+Epoch 37: Switching to Mahalanobis distance for matching
+Epoch: [37][0/7]	Time 2.981 (2.981)	Data 0.348 (0.348)	Loss 4.0069 (4.0069)	PaC 0.2012 (0.2012)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [37] Time 0.053	Loss 4.3823	Acc@1 1.250	Acc@5 6.667
+Epoch 38: Switching to Mahalanobis distance for matching
+Epoch: [38][0/7]	Time 2.996 (2.996)	Data 0.395 (0.395)	Loss 4.0015 (4.0015)	PaC 0.2039 (0.2039)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [38] Time 0.047	Loss 4.3823	Acc@1 1.250	Acc@5 6.667
+Epoch 39: Switching to Mahalanobis distance for matching
+Epoch: [39][0/7]	Time 3.141 (3.141)	Data 0.368 (0.368)	Loss 4.0137 (4.0137)	PaC 0.2110 (0.2110)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [39] Time 0.054	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 40: Switching to Mahalanobis distance for matching
+Epoch: [40][0/7]	Time 3.059 (3.059)	Data 0.396 (0.396)	Loss 4.0053 (4.0053)	PaC 0.1956 (0.1956)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [40] Time 0.053	Loss 4.3823	Acc@1 1.250	Acc@5 5.833
+Epoch 41: Switching to Mahalanobis distance for matching
+Epoch: [41][0/7]	Time 3.076 (3.076)	Data 0.414 (0.414)	Loss 4.0060 (4.0060)	PaC 0.2015 (0.2015)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [41] Time 0.054	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 42: Switching to Mahalanobis distance for matching
+Epoch: [42][0/7]	Time 3.064 (3.064)	Data 0.393 (0.393)	Loss 4.0061 (4.0061)	PaC 0.2036 (0.2036)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [42] Time 0.060	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 43: Switching to Mahalanobis distance for matching
+Epoch: [43][0/7]	Time 3.297 (3.297)	Data 0.412 (0.412)	Loss 4.0056 (4.0056)	PaC 0.1983 (0.1983)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [43] Time 0.057	Loss 4.3821	Acc@1 1.250	Acc@5 6.250
+Epoch 44: Switching to Mahalanobis distance for matching
+Epoch: [44][0/7]	Time 2.965 (2.965)	Data 0.401 (0.401)	Loss 4.0024 (4.0024)	PaC 0.2021 (0.2021)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [44] Time 0.056	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch 45: Switching to Mahalanobis distance for matching
+Epoch: [45][0/7]	Time 3.019 (3.019)	Data 0.387 (0.387)	Loss 4.0013 (4.0013)	PaC 0.1999 (0.1999)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [45] Time 0.061	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch 46: Switching to Mahalanobis distance for matching
+Epoch: [46][0/7]	Time 3.050 (3.050)	Data 0.421 (0.421)	Loss 4.0059 (4.0059)	PaC 0.1998 (0.1998)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [46] Time 0.067	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 47: Switching to Mahalanobis distance for matching
+Epoch: [47][0/7]	Time 3.158 (3.158)	Data 0.413 (0.413)	Loss 4.0038 (4.0038)	PaC 0.1999 (0.1999)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [47] Time 0.053	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch 48: Switching to Mahalanobis distance for matching
+Epoch: [48][0/7]	Time 3.109 (3.109)	Data 0.441 (0.441)	Loss 4.0072 (4.0072)	PaC 0.2021 (0.2021)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [48] Time 0.050	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch 49: Switching to Mahalanobis distance for matching
+Epoch: [49][0/7]	Time 3.089 (3.089)	Data 0.414 (0.414)	Loss 4.0094 (4.0094)	PaC 0.1976 (0.1976)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [49] Time 0.051	Loss 4.3822	Acc@1 1.250	Acc@5 6.250
+Epoch 50: Switching to Mahalanobis distance for matching
+Epoch: [50][0/7]	Time 3.234 (3.234)	Data 0.415 (0.415)	Loss 4.0081 (4.0081)	PaC 0.2001 (0.2001)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [50] Time 0.053	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 51: Switching to Mahalanobis distance for matching
+Epoch: [51][0/7]	Time 3.206 (3.206)	Data 0.434 (0.434)	Loss 4.0046 (4.0046)	PaC 0.2000 (0.2000)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [51] Time 0.052	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 52: Switching to Mahalanobis distance for matching
+Epoch: [52][0/7]	Time 3.114 (3.114)	Data 0.440 (0.440)	Loss 4.0056 (4.0056)	PaC 0.2004 (0.2004)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [52] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 53: Switching to Mahalanobis distance for matching
+Epoch: [53][0/7]	Time 3.196 (3.196)	Data 0.404 (0.404)	Loss 3.9974 (3.9974)	PaC 0.2001 (0.2001)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [53] Time 0.056	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 54: Switching to Mahalanobis distance for matching
+Epoch: [54][0/7]	Time 3.416 (3.416)	Data 0.453 (0.453)	Loss 4.0030 (4.0030)	PaC 0.2010 (0.2010)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [54] Time 0.052	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 55: Switching to Mahalanobis distance for matching
+Epoch: [55][0/7]	Time 3.155 (3.155)	Data 0.390 (0.390)	Loss 4.0068 (4.0068)	PaC 0.1982 (0.1982)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [55] Time 0.055	Loss 4.3823	Acc@1 1.250	Acc@5 6.250
+Epoch 56: Switching to Mahalanobis distance for matching
+Epoch: [56][0/7]	Time 3.459 (3.459)	Data 0.425 (0.425)	Loss 4.0026 (4.0026)	PaC 0.2017 (0.2017)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [56] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 57: Switching to Mahalanobis distance for matching
+Epoch: [57][0/7]	Time 3.115 (3.115)	Data 0.382 (0.382)	Loss 4.0102 (4.0102)	PaC 0.2014 (0.2014)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [57] Time 0.054	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 58: Switching to Mahalanobis distance for matching
+Epoch: [58][0/7]	Time 3.213 (3.213)	Data 0.422 (0.422)	Loss 4.0078 (4.0078)	PaC 0.1986 (0.1986)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [58] Time 0.051	Loss 4.3824	Acc@1 1.250	Acc@5 6.250
+Epoch 59: Switching to Mahalanobis distance for matching
+Epoch: [59][0/7]	Time 3.324 (3.324)	Data 0.459 (0.459)	Loss 4.0077 (4.0077)	PaC 0.2001 (0.2001)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [59] Time 0.053	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 60: Switching to Mahalanobis distance for matching
+Epoch: [60][0/7]	Time 3.223 (3.223)	Data 0.449 (0.449)	Loss 4.0097 (4.0097)	PaC 0.2013 (0.2013)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [60] Time 0.062	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 61: Switching to Mahalanobis distance for matching
+Epoch: [61][0/7]	Time 3.317 (3.317)	Data 0.432 (0.432)	Loss 4.0041 (4.0041)	PaC 0.2008 (0.2008)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [61] Time 0.056	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 62: Switching to Mahalanobis distance for matching
+Epoch: [62][0/7]	Time 3.228 (3.228)	Data 0.396 (0.396)	Loss 4.0076 (4.0076)	PaC 0.1990 (0.1990)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [62] Time 0.051	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 63: Switching to Mahalanobis distance for matching
+Epoch: [63][0/7]	Time 3.170 (3.170)	Data 0.445 (0.445)	Loss 4.0043 (4.0043)	PaC 0.1998 (0.1998)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [63] Time 0.049	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 64: Switching to Mahalanobis distance for matching
+Epoch: [64][0/7]	Time 3.082 (3.082)	Data 0.397 (0.397)	Loss 4.0048 (4.0048)	PaC 0.2004 (0.2004)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [64] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 65: Switching to Mahalanobis distance for matching
+Epoch: [65][0/7]	Time 3.177 (3.177)	Data 0.428 (0.428)	Loss 4.0013 (4.0013)	PaC 0.2034 (0.2034)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [65] Time 0.053	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 66: Switching to Mahalanobis distance for matching
+Epoch: [66][0/7]	Time 3.278 (3.278)	Data 0.444 (0.444)	Loss 4.0070 (4.0070)	PaC 0.1998 (0.1998)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [66] Time 0.055	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 67: Switching to Mahalanobis distance for matching
+Epoch: [67][0/7]	Time 2.988 (2.988)	Data 0.365 (0.365)	Loss 4.0046 (4.0046)	PaC 0.2018 (0.2018)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [67] Time 0.055	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 68: Switching to Mahalanobis distance for matching
+Epoch: [68][0/7]	Time 3.270 (3.270)	Data 0.403 (0.403)	Loss 4.0065 (4.0065)	PaC 0.2021 (0.2021)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [68] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 69: Switching to Mahalanobis distance for matching
+Epoch: [69][0/7]	Time 3.028 (3.028)	Data 0.379 (0.379)	Loss 4.0031 (4.0031)	PaC 0.2008 (0.2008)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [69] Time 0.049	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 70: Switching to Mahalanobis distance for matching
+Epoch: [70][0/7]	Time 2.816 (2.816)	Data 0.390 (0.390)	Loss 4.0013 (4.0013)	PaC 0.2000 (0.2000)	SoC 0.0000 (0.0000)	Acc@1 9.375 (9.375)
+Val: [70] Time 0.049	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 71: Switching to Mahalanobis distance for matching
+Epoch: [71][0/7]	Time 2.751 (2.751)	Data 0.392 (0.392)	Loss 4.0094 (4.0094)	PaC 0.2001 (0.2001)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [71] Time 0.045	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 72: Switching to Mahalanobis distance for matching
+Epoch: [72][0/7]	Time 2.585 (2.585)	Data 0.369 (0.369)	Loss 4.0067 (4.0067)	PaC 0.2022 (0.2022)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [72] Time 0.050	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 73: Switching to Mahalanobis distance for matching
+Epoch: [73][0/7]	Time 3.084 (3.084)	Data 0.412 (0.412)	Loss 4.0074 (4.0074)	PaC 0.2002 (0.2002)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [73] Time 0.047	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 74: Switching to Mahalanobis distance for matching
+Epoch: [74][0/7]	Time 2.922 (2.922)	Data 0.410 (0.410)	Loss 4.0038 (4.0038)	PaC 0.2008 (0.2008)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [74] Time 0.063	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 75: Switching to Mahalanobis distance for matching
+Epoch: [75][0/7]	Time 2.993 (2.993)	Data 0.409 (0.409)	Loss 4.0003 (4.0003)	PaC 0.2000 (0.2000)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [75] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 76: Switching to Mahalanobis distance for matching
+Epoch: [76][0/7]	Time 3.251 (3.251)	Data 0.437 (0.437)	Loss 4.0049 (4.0049)	PaC 0.1999 (0.1999)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [76] Time 0.054	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 77: Switching to Mahalanobis distance for matching
+Epoch: [77][0/7]	Time 3.094 (3.094)	Data 0.408 (0.408)	Loss 4.0072 (4.0072)	PaC 0.1998 (0.1998)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [77] Time 0.052	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 78: Switching to Mahalanobis distance for matching
+Epoch: [78][0/7]	Time 3.071 (3.071)	Data 0.436 (0.436)	Loss 4.0048 (4.0048)	PaC 0.2021 (0.2021)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [78] Time 0.049	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 79: Switching to Mahalanobis distance for matching
+Epoch: [79][0/7]	Time 2.977 (2.977)	Data 0.386 (0.386)	Loss 4.0053 (4.0053)	PaC 0.1991 (0.1991)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [79] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 80: Switching to Mahalanobis distance for matching
+Epoch: [80][0/7]	Time 3.024 (3.024)	Data 0.429 (0.429)	Loss 4.0036 (4.0036)	PaC 0.1986 (0.1986)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [80] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 81: Switching to Mahalanobis distance for matching
+Epoch: [81][0/7]	Time 3.053 (3.053)	Data 0.399 (0.399)	Loss 4.0007 (4.0007)	PaC 0.2008 (0.2008)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [81] Time 0.051	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 82: Switching to Mahalanobis distance for matching
+Epoch: [82][0/7]	Time 3.151 (3.151)	Data 0.398 (0.398)	Loss 4.0057 (4.0057)	PaC 0.2026 (0.2026)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [82] Time 0.051	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 83: Switching to Mahalanobis distance for matching
+Epoch: [83][0/7]	Time 3.033 (3.033)	Data 0.378 (0.378)	Loss 4.0071 (4.0071)	PaC 0.1997 (0.1997)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [83] Time 0.052	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 84: Switching to Mahalanobis distance for matching
+Epoch: [84][0/7]	Time 3.089 (3.089)	Data 0.378 (0.378)	Loss 4.0021 (4.0021)	PaC 0.2000 (0.2000)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [84] Time 0.055	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 85: Switching to Mahalanobis distance for matching
+Epoch: [85][0/7]	Time 3.211 (3.211)	Data 0.431 (0.431)	Loss 4.0079 (4.0079)	PaC 0.1972 (0.1972)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [85] Time 0.051	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 86: Switching to Mahalanobis distance for matching
+Epoch: [86][0/7]	Time 2.973 (2.973)	Data 0.406 (0.406)	Loss 4.0049 (4.0049)	PaC 0.1998 (0.1998)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [86] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 87: Switching to Mahalanobis distance for matching
+Epoch: [87][0/7]	Time 2.979 (2.979)	Data 0.367 (0.367)	Loss 4.0040 (4.0040)	PaC 0.2002 (0.2002)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [87] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 88: Switching to Mahalanobis distance for matching
+Epoch: [88][0/7]	Time 3.348 (3.348)	Data 0.421 (0.421)	Loss 4.0022 (4.0022)	PaC 0.1993 (0.1993)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [88] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 89: Switching to Mahalanobis distance for matching
+Epoch: [89][0/7]	Time 3.032 (3.032)	Data 0.410 (0.410)	Loss 4.0004 (4.0004)	PaC 0.2005 (0.2005)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [89] Time 0.055	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 90: Switching to Mahalanobis distance for matching
+Epoch: [90][0/7]	Time 3.045 (3.045)	Data 0.404 (0.404)	Loss 4.0100 (4.0100)	PaC 0.2019 (0.2019)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [90] Time 0.052	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 91: Switching to Mahalanobis distance for matching
+Epoch: [91][0/7]	Time 3.046 (3.046)	Data 0.380 (0.380)	Loss 4.0031 (4.0031)	PaC 0.2009 (0.2009)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [91] Time 0.053	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 92: Switching to Mahalanobis distance for matching
+Epoch: [92][0/7]	Time 2.953 (2.953)	Data 0.399 (0.399)	Loss 4.0053 (4.0053)	PaC 0.2009 (0.2009)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [92] Time 0.050	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 93: Switching to Mahalanobis distance for matching
+Epoch: [93][0/7]	Time 3.046 (3.046)	Data 0.403 (0.403)	Loss 4.0064 (4.0064)	PaC 0.2003 (0.2003)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [93] Time 0.048	Loss 4.3825	Acc@1 1.250	Acc@5 6.250
+Epoch 94: Switching to Mahalanobis distance for matching
+Epoch: [94][0/7]	Time 3.088 (3.088)	Data 0.399 (0.399)	Loss 4.0076 (4.0076)	PaC 0.2013 (0.2013)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [94] Time 0.058	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 95: Switching to Mahalanobis distance for matching
+Epoch: [95][0/7]	Time 3.076 (3.076)	Data 0.415 (0.415)	Loss 4.0051 (4.0051)	PaC 0.2007 (0.2007)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [95] Time 0.051	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 96: Switching to Mahalanobis distance for matching
+Epoch: [96][0/7]	Time 3.058 (3.058)	Data 0.371 (0.371)	Loss 4.0018 (4.0018)	PaC 0.1995 (0.1995)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [96] Time 0.050	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 97: Switching to Mahalanobis distance for matching
+Epoch: [97][0/7]	Time 3.049 (3.049)	Data 0.407 (0.407)	Loss 4.0065 (4.0065)	PaC 0.2012 (0.2012)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [97] Time 0.053	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 98: Switching to Mahalanobis distance for matching
+Epoch: [98][0/7]	Time 2.950 (2.950)	Data 0.407 (0.407)	Loss 3.9932 (3.9932)	PaC 0.2025 (0.2025)	SoC 0.0000 (0.0000)	Acc@1 3.125 (3.125)
+Val: [98] Time 0.052	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+Epoch 99: Switching to Mahalanobis distance for matching
+Epoch: [99][0/7]	Time 3.064 (3.064)	Data 0.435 (0.435)	Loss 4.0052 (4.0052)	PaC 0.1994 (0.1994)	SoC 0.0000 (0.0000)	Acc@1 0.000 (0.000)
+Val: [99] Time 0.049	Loss 4.3826	Acc@1 1.250	Acc@5 6.250
+訓練完成！最佳驗證準確率: 2.917%
+[1;34mwandb[0m: 
+[1;34mwandb[0m: You can sync this run to the cloud by running:
+[1;34mwandb[0m: [1mwandb sync /scratch/rp06/sl5952/PaCo-2/wandb/offline-run-20250806_104933-h87rvg0w[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/offline-run-20250806_104933-h87rvg0w/logs[0m
