@@ -17,7 +17,7 @@ model:
   alpha: 0.2                         # Triplet loss 邊際值 (Triplet loss margin)
   beta: 0.05                         # 負樣本選擇參數 (Negative sampling parameter)
   gamma: 0.1                         # 困難負樣本挖掘權重 (Hard negative mining weight)
-  top_m_candidates: 64               # 負樣本候選池大小 (Negative candidates pool size)
+  top_m_candidates: 32               # 負樣本候選池大小 (Negative candidates pool size)
   
   # === 數值穩定性參數 (Numerical Stability Parameters) ===
   epsilon: 1.0e-2                    # 協方差矩陣對角加載值，防止奇異 (Diagonal loading for covariance matrix)
